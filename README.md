@@ -1,3 +1,11 @@
+---
+title: Truthlens Backend
+emoji: 🔍
+colorFrom: blue
+colorTo: green
+sdk: docker
+pinned: false
+---
 # TruthLens 🔍
 > **Advanced Real-Time Fake News Detection & Verification System**
 
