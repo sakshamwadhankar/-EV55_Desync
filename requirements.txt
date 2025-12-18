@@ -11,3 +11,6 @@ spacy
 transformers
 nltk
 requests
+gunicorn
+django-cors-headers
+whitenoise
