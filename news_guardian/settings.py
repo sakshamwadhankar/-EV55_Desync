@@ -25,8 +25,7 @@ SECRET_KEY = "django-insecure-+9twpxb&oe1=@9ex4e6yc+3i#y7(p6bt(389vl*=d&c(u!35k)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -37,9 +36,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders", # Added for frontend connection
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware", # Must be at the top
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -47,7 +48,12 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware", # Optional but good for static
 ]
+
+# CORS & CSRF Settings for Production
+CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com', 'https://*.netlify.app']
 
 ROOT_URLCONF = "news_guardian.urls"
 
