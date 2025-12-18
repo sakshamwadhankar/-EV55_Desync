@@ -1,8 +1,28 @@
-*.csv
-*.txt
-!requirements.txt
+
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
+
+# Django
 *.log
-debug_output.txt
-files.txt
-cwd.txt
+local_settings.py
+db.sqlite3
+media
+
+# Static
+static root/
+staticfiles/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
