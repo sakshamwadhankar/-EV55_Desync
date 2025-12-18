@@ -15,7 +15,7 @@ def home(request):
     Main view for the Fact Checker application.
     Handles form submission, orchestrates the fact-checking service,
     and renders the result dashboard.
-    # Trigger reload (Interactive Home BG)
+    # Trigger reload (Team Details Updated)
     """
     if request.method == 'POST':
         form = factsForm(request.POST)
@@ -59,32 +59,38 @@ def home(request):
             similarities = FactCheckerService.check_similarity(user_query, summaries)
             
             # 5. Generate Word Cloud
-            text = " "
-            if summaries:
-                sentences = np.array(summaries)
-                text = ' '.join(sentences)
+            # 5. Visuals: Search Image -> Fallback to WordCloud
+            news_image_url = FactCheckerService.fetch_image(user_query)
+            uri = ""
             
-            if not text.strip():
-                text = "No_Data_Found"
-                
-            try:
-                wordcloud = WordCloud(width=800, height=800, background_color='white').generate(text)
-                
-                # Convert plot to PNG image
-                fig = plt.figure(facecolor=None)
-                plt.imshow(wordcloud)
-                plt.axis("off")
-                plt.tight_layout(pad=0)
-                
-                buf = io.BytesIO()
-                plt.savefig(buf, format='png')
-                buf.seek(0)
-                image_base64 = base64.b64encode(buf.read()).decode('utf-8')
-                uri = urllib.parse.quote(image_base64)
-                plt.close(fig) 
-            except Exception as wc_e:
-                print(f"WordCloud Error: {wc_e}")
-                uri = "" # Handle missing image in template if needed
+            # If no image found, generate WordCloud
+            if not news_image_url:
+                try:
+                    text = " "
+                    if summaries:
+                        sentences = np.array(summaries)
+                        text = ' '.join(sentences)
+                    
+                    if not text.strip():
+                        text = "No_Data_Found"
+                        
+                    wordcloud = WordCloud(width=800, height=500, background_color='#16191f', colormap='Set2').generate(text)
+                    
+                    # Convert plot to PNG image
+                    fig = plt.figure(figsize=(10, 5), facecolor='#16191f')
+                    plt.imshow(wordcloud)
+                    plt.axis("off")
+                    plt.tight_layout(pad=0)
+                    
+                    buf = io.BytesIO()
+                    plt.savefig(buf, format='png')
+                    buf.seek(0)
+                    image_base64 = base64.b64encode(buf.read()).decode('utf-8')
+                    uri = urllib.parse.quote(image_base64)
+                    plt.close(fig) 
+                except Exception as wc_e:
+                    print(f"WordCloud Error: {wc_e}")
+                    uri = ""
 
             # 6. Determine Verdict
             if similarities:
@@ -102,8 +108,9 @@ def home(request):
 
             # Update Context
             context.update({
-                'fine': results_table_html, # Keeping 'fine' as key if template expects it, otherwise valid_urls
+                'fine': results_table_html, 
                 'fact_check': verdict,
+                'news_image': news_image_url,
                 'data': uri
             })
 

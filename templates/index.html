@@ -374,23 +374,41 @@
             </div>
 
             <div class="row g-4">
-                <!-- Word Cloud Context -->
-                <div class="col-md-6">
-                    <div class="p-3 h-100"
+                <!-- Right Column: Visuals -->
+                <div class="col-lg-5">
+                    <div class="p-4 h-100"
                         style="background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-subtle);">
-                        <h5 class="brand-font mb-3">Contextual Analysis</h5>
-                        <div class="wordcloud-container text-center">
-                            {% if data %}
-                            <img src="data:image/png;base64,{{data}}" alt="Word Cloud Analysis">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="fs-4 me-2">📊</span>
+                            <h3 class="mb-0 fs-5 font-playfair">Contextual Analysis</h3>
+                        </div>
+                        <div class="visual-container text-center d-flex align-items-center justify-content-center"
+                            style="min-height: 250px; background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden;">
+                            {% if news_image %}
+                            <img src="{{ news_image }}" alt="Relevant News" class="img-fluid"
+                                style="max-height: 300px; width: 100%; object-fit: cover;">
+                            {% elif data %}
+                            <img src="data:image/png;base64,{{ data }}" alt="Word Cloud" class="img-fluid"
+                                style="max-height: 300px; width: 100%; object-fit: contain;">
                             {% else %}
-                            <p class="text-muted py-5">No sufficient text data to generate context cloud.</p>
+                            <div class="text-muted p-4">
+                                <i class="fa-regular fa-image fs-1 mb-2"></i>
+                                <p class="mb-0">No visual data available.</p>
+                            </div>
                             {% endif %}
                         </div>
+                        <p class="text-muted small mt-3 text-center">
+                            {% if news_image %}
+                            Real-time image match from trusted sources.
+                            {% else %}
+                            Keyword frequency analysis from search results.
+                            {% endif %}
+                        </p>
                     </div>
                 </div>
 
                 <!-- Sources List -->
-                <div class="col-md-6">
+                <div class="col-lg-7">
                     <div class="p-3 h-100"
                         style="background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-subtle);">
                         <h5 class="brand-font mb-3">Verified Sources</h5>
