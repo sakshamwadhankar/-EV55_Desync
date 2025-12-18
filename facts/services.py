@@ -263,3 +263,21 @@ class FactCheckerService:
         except Exception as e:
             print(f"DEBUG: General Verdict Error: {e}")
             return "Unable to Verify (System Error)"
+
+    @staticmethod
+    def fetch_image(query):
+        """Fetches a relevant image for the news query."""
+        print(f"DEBUG: Fetching image for '{query}'...")
+        try:
+            with DDGS() as ddgs:
+                # Use a specific keyword to bias towards news photos
+                image_query = f"{query} news"
+                images = list(ddgs.images(image_query, max_results=1))
+                if images:
+                    img_url = images[0]['image']
+                    print(f"DEBUG: Found image: {img_url}")
+                    return img_url
+        except Exception as e:
+            print(f"DEBUG: Image Fetch Error: {e}")
+        
+        return None
