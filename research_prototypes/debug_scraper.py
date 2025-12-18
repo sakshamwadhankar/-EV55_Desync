@@ -15,9 +15,16 @@ def test_scraper():
     try:
         urls = []
         with DDGS() as ddgs:
-            results = list(ddgs.text(query, max_results=5))
-            for r in results:
-                urls.append(r['href'])
+            try:
+                query = "Thailand bombs near Cambodia's Poipet border crossing"
+                print(f"Testing Query: {query}")
+                
+                results = ddgs.text(query, max_results=5)
+                results_list = list(results)
+                for r in results_list:
+                        urls.append(r['href'])
+            except Exception as e:
+                print(f"Search EXCEPTION within DDGS context: {e}")
         
         print(f"Search results: {len(urls)}")
         for url in urls:

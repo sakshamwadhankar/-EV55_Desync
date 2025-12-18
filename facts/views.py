@@ -2,6 +2,8 @@ from django.shortcuts import render
 from .forms import factsForm
 from .services import FactCheckerService
 from wordcloud import WordCloud
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import io
 import urllib, base64
@@ -13,6 +15,7 @@ def home(request):
     Main view for the Fact Checker application.
     Handles form submission, orchestrates the fact-checking service,
     and renders the result dashboard.
+    # Trigger reload (Interactive Home BG)
     """
     if request.method == 'POST':
         form = factsForm(request.POST)
@@ -86,7 +89,9 @@ def home(request):
             # 6. Determine Verdict
             if similarities:
                 avg_similarity = np.mean(similarities)
-                verdict = FactCheckerService.classify_verdict(avg_similarity, user_query)
+                max_similarity = np.max(similarities)
+                source_count = len(valid_urls)
+                verdict = FactCheckerService.classify_verdict(avg_similarity, max_similarity, source_count, user_query)
             else:
                 verdict = "Could not determine similarity."
 
@@ -107,3 +112,7 @@ def home(request):
     else:
         form = factsForm()
         return render(request, 'index.html', {'facts': form})
+
+def about(request):
+    """Renders the About page with team details."""
+    return render(request, 'about.html')

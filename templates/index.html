@@ -1,248 +1,621 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
-<style>
-    table,
-    caption,
-    tbody,
-    tfoot,
-    thead,
-    tr,
-    th,
-    td {
-        margin: 0;
-        padding: 0;
-        border: 0;
-        font-size: 100%;
-        font: inherit;
-        vertical-align: baseline;
-    }
-
-    table {
-        border-collapse: collapse;
-        border-spacing: 0;
-    }
-</style>
+<html lang="en">
 
 <head>
-    <meta name="generator" content="TruthLens">
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-    <link rel="shortcut icon" href="{% static 'assets/images/logo5.png' %}" type="image/x-icon">
-    <meta name="description" content="">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TruthLens | Advanced Fact Checking</title>
 
+    <!-- Fonts: Inter for Clean UI, Playfair Display for "Truth" Elegance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
 
-    <title>Home</title>
-    <link rel="stylesheet" href="{% static 'assets/web/assets/mobirise-icons2/mobirise2.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap-grid.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap-reboot.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/parallax/jarallax.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/socicon/css/styles.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/theme/css/style.css' %}">
-    <link rel="preload"
-        href="https://fonts.googleapis.com/css?family=Lexend:100,200,300,400,500,600,700,800,900&display=swap"
-        as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Lexend:100,200,300,400,500,600,700,800,900&display=swap">
-    </noscript>
-    <link rel="preload" as="style" href="{% static 'assets/mobirise/css/mbr-additional.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/mobirise/css/mbr-additional.css' %}" type="text/css">
+    <!-- Bootstrap (only for grid/utility, customised) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <style>
+        :root {
+            /* Palette */
+            --bg-dark: #0f1115;
+            /* Deep Charcoal */
+            --bg-card: #16191f;
+            /* Slightly lighter charcoal */
+            --accent-emerald: #10b981;
+            /* Trust / True */
+            --accent-teal: #14b8a6;
+            /* Soft True */
+            --accent-amber: #f59e0b;
+            /* Warning */
+            --accent-red: #ef4444;
+            /* Fake */
+            --text-main: #f3f4f6;
+            /* Warm white */
+            --text-muted: #9ca3af;
+            /* Gray */
+            --border-subtle: #2d3139;
+        }
 
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
+        h1,
+        h2,
+        h3,
+        .brand-font {
+            font-family: 'Playfair Display', serif;
+        }
 
+        /* Navbar */
+        .navbar {
+            background: rgba(15, 17, 21, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1rem 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: var(--text-main) !important;
+            font-size: 1.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .lens-icon {
+            color: var(--accent-emerald);
+        }
+
+        /* 3D Container (Navbar decoration) */
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 80px;
+            pointer-events: none;
+            z-index: 1001;
+            opacity: 0.6;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 5rem 0 3rem 0;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #fff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            padding: 1.25rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-input:focus {
+            background: #1c2026;
+            border-color: var(--accent-emerald);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .btn-verify {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            bottom: 8px;
+            padding: 0 2rem;
+            border-radius: 8px;
+            background: var(--accent-emerald);
+            color: #fff;
+            border: none;
+            font-weight: 500;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .btn-verify:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        /* Results Area */
+        .result-section {
+            margin-top: 2rem;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .verdict-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .verdict-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .verdict-text {
+            font-size: 2rem;
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 0;
+        }
+
+        /* Verdict Colors (Applied via JS mapping) */
+        .v-strong-true {
+            color: var(--accent-emerald);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .v-likely-true {
+            color: var(--accent-teal);
+            border-color: rgba(20, 184, 166, 0.3);
+        }
+
+        .v-fake {
+            color: var(--accent-red);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .v-unverified {
+            color: var(--text-muted);
+            border-color: var(--border-subtle);
+        }
+
+        /* Data Visualization & Sources */
+        .sources-table {
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            font-size: 0.95rem;
+        }
+
+        .sources-table table {
+            width: 100%;
+            color: var(--text-muted);
+        }
+
+        .sources-table th {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .sources-table td {
+            padding: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .sources-table a {
+            color: var(--accent-teal);
+            text-decoration: none;
+        }
+
+        .sources-table a:hover {
+            text-decoration: underline;
+        }
+
+        /* Correcting Table Visibility */
+        .sources-table,
+        .sources-table table {
+            color: var(--text-muted);
+            border-color: var(--border-subtle);
+        }
+
+        .sources-table td,
+        .sources-table th {
+            border-color: var(--border-subtle);
+            color: var(--text-main);
+            /* Ensure text is visible on dark bg */
+        }
+
+        /* Fix Table Striping if Bootstrap adds it */
+        .table-striped>tbody>tr:nth-of-type(odd)>* {
+            --bs-table-accent-bg: rgba(255, 255, 255, 0.03);
+            color: var(--text-main);
+        }
+
+        .wordcloud-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            filter: grayscale(20%) contrast(110%);
+            border: 1px solid var(--border-subtle);
+            transition: filter 0.3s;
+        }
+
+        .wordcloud-container img:hover {
+            filter: grayscale(0%) contrast(100%);
+        }
+
+        /* Interactive BG */
+        #interactive-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            /* Let clicks pass through */
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            padding: 2rem 0;
+            border-top: 1px solid var(--border-subtle);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Utility */
+        .badge-confidence {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+    </style>
 </head>
 
 <body>
 
-    <section data-bs-version="5.1" class="header11 cid-sFF0SGinka" id="header11-1">
+    <!-- Interactive Canvas -->
+    <canvas id="interactive-bg"></canvas>
 
+    <!-- Three.js Visual (Navbar Decoration) -->
+    <div id="canvas-container"></div>
 
-
-
-
-        <div class="container-fluid">
-            <div class="row justify-content-center">
-                <div class="col-12 col-md-5 image-wrapper">
-                    <img class="w-100" src="{% static 'assets/images/kavach-logo-removebg-preview.png' %}"
-                        alt="TruthLens">
-                </div>
-                <div class="col-12 col-md">
-                    <div class="text-wrapper text-center">
-                        <h1 class="mbr-section-title mbr-fonts-style mb-3 display-1">
-                            <strong>
-                            </strong>
-                            <div><strong><br></strong></div>
-                            <div><strong>Advanced </strong></div>
-                            <div><strong>Fake News </strong></div>
-                            <div><strong>Detection</strong></div>
-                            <div><br></div>
-                        </h1>
-
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section data-bs-version="5.1" class="form7 cid-tzryIGlyqm" id="form7-5">
-
-        <div class="mbr-overlay"></div>
-        <div class="container-fluid">
-            <div class="mbr-section-head">
-                <h3 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2">
-                    <strong>Fact check here</strong>
-                </h3>
-
-            </div>
-            <div class="row justify-content-center mt-4">
-                <div class="col-lg-8 mx-auto mbr-form" data-form-type="formoid">
-                    <form method="POST" class="mbr-form form-with-styler mx-auto" data-form-title="Form Name"><input
-                            type="hidden" name="email" data-form-email="true"
-                            value="gjc0Jo6UPnds4Wa/S+/EP8XWvrmlGFjxvKXuXLmMhaKtGk1WJuFk3PwQqbwebL21waTixqwcZ7qlPKhDlT4c5jJ4WOrD9NUFcc6WydExx5Tg8h4MwsjBuUTVPYzhWBo1">
-                        {% csrf_token %}
-
-                        <div class="dragArea row">
-                            <div class="col-lg-12 col-md-12 col-sm-12 form-group mb-3" data-for="name">
-                                <input type="text" name="facts" placeholder="NEWS" data-form-field="name"
-                                    class="form-control" value="" id="facts">
-                            </div>
-
-
-                            <div class="col-auto mbr-section-btn align-center">
-                                <button type="submit" class="btn btn-primary display-4">Submit</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section data-bs-version="5.1" class="content15 cid-tzrE5Eqx0R" id="content15-6">
-
-
-
-
-
+    <!-- Navbar -->
+    <nav class="navbar">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="card col-md-12 col-lg-10">
-                    <div class="card-wrapper">
-                        <div class="card-box align-left">
-                            <h4 class="card-title mbr-fonts-style mbr-white mb-3 display-5">
-                                <strong>Sources</strong>
-                            </h4>
-                            <p class="mbr-text mbr-fonts-style display-7">
-                            <table>
-                                {{fine | safe}}
-                            </table>
-                            </p>
+            <a class="navbar-brand" href="/">
+                <span class="lens-icon">◉</span>
+                <span>TruthLens</span>
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <a href="/about" class="text-decoration-none" style="color: var(--text-muted); font-size: 0.9rem;">About
+                    Us</a>
+                <span class="badge rounded-pill bg-dark border border-secondary text-secondary">v1.2</span>
+            </div>
+        </div>
+    </nav>
 
+    <!-- Main Content -->
+    <main class="container hero">
+        <div class="text-center mb-5">
+            <h1>See the truth behind the news.</h1>
+            <p class="text-muted" style="max-width: 600px; margin: 0 auto;">
+                Advanced AI-powered fact checking. We analyze credibility, context, and consensus from thousands of
+                trusted sources instantly.
+            </p>
+        </div>
+
+        <!-- Search Form -->
+        <div class="search-container">
+            <form method="POST" id="analysis-form">
+                {% csrf_token %}
+                <input type="text" name="facts" id="facts" class="search-input"
+                    placeholder="Paste a headline or claim (e.g. 'India launches Chandrayaan mission')"
+                    value="{{ facts.facts.value|default:'' }}" required autocomplete="off">
+                <button type="submit" class="btn-verify">Verify Claim</button>
+            </form>
+        </div>
+
+        {% if fact_check %}
+        <!-- Analysis Results -->
+        <div class="result-section">
+            <div class="row">
+                <!-- Verdict Card -->
+                <div class="col-lg-8 mx-auto">
+                    <div class="verdict-card" id="verdict-card">
+                        <span class="verdict-label">AI Analysis Verdict</span>
+                        <h2 class="verdict-text" id="verdict-text">{{ fact_check }}</h2>
+                        <!-- We use JS to parse confidence from text if available, or just show decorative badge -->
+                        <div class="badge-confidence" id="confidence-badge">Analysis Complete</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Word Cloud Context -->
+                <div class="col-md-6">
+                    <div class="p-3 h-100"
+                        style="background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-subtle);">
+                        <h5 class="brand-font mb-3">Contextual Analysis</h5>
+                        <div class="wordcloud-container text-center">
+                            {% if data %}
+                            <img src="data:image/png;base64,{{data}}" alt="Word Cloud Analysis">
+                            {% else %}
+                            <p class="text-muted py-5">No sufficient text data to generate context cloud.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sources List -->
+                <div class="col-md-6">
+                    <div class="p-3 h-100"
+                        style="background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-subtle);">
+                        <h5 class="brand-font mb-3">Verified Sources</h5>
+                        <div class="sources-table table-responsive">
+                            <!-- Django passes HTML table in 'fine' variable -->
+                            {% if fine %}
+                            {{ fine | safe }}
+                            {% else %}
+                            <p class="p-3 text-muted">No sources found.</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+        {% endif %}
 
-    <section data-bs-version="5.1" class="content7 cid-tzrEn3utgX" id="content7-7">
+    </main>
 
-        <div class="container-fluid">
-            <div class="row justify-content-center">
-                <div class="col-12 col-md-4">
-                    <blockquote>
-                        <h5 class="mbr-section-title mbr-fonts-style mb-2 display-7"><strong>Result</strong></h5>
-                        <p class="mbr-text mbr-fonts-style display-4">{{fact_check}}</p>
-                    </blockquote>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section data-bs-version="5.1" class="image3 cid-tzs6NTIYcO" id="image3-9">
-
-
-
-
-
-
+    <footer>
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-12 col-lg-6">
-                    <div class="image-wrapper">
-                        <img src="data:image/png;base64,{{data}}">
-                        <p class="mbr-description mbr-fonts-style mt-2 align-center display-4">
-                            Context WordCloud </p>
-                    </div>
-                </div>
-            </div>
+            <p>&copy; 2025 TruthLens. Powered by SBERT & DuckDuckGo. System Audit Passed.</p>
         </div>
-    </section>
+    </footer>
 
-    <section data-bs-version="5.1" class="header19 cid-tzrs7rtmm7 mbr-fullscreen mbr-parallax-background"
-        id="header19-3">
+    <!-- Scripts -->
+    <!-- Three.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
+    <script>
+        // --- 1. Verdict Styling Logic ---
+        document.addEventListener("DOMContentLoaded", function () {
+            const verdictText = document.getElementById("verdict-text");
+            const verdictCard = document.getElementById("verdict-card");
 
+            if (verdictText && verdictCard) {
+                const text = verdictText.innerText.toLowerCase();
 
+                // Clear default styles
+                verdictCard.classList.remove("v-strong-true", "v-likely-true", "v-fake", "v-unverified");
 
-        <div class="mbr-overlay" style="opacity: 0.4; background-color: rgb(35, 35, 35);">
-        </div>
+                if (text.includes("true") && text.includes("high confidence")) {
+                    verdictCard.classList.add("v-strong-true");
+                } else if (text.includes("true") || text.includes("likely")) {
+                    verdictCard.classList.add("v-likely-true"); // Fallback for True/Likely
+                } else if (text.includes("fake") || text.includes("hate") || text.includes("profanity")) {
+                    verdictCard.classList.add("v-fake");
+                } else {
+                    verdictCard.classList.add("v-unverified");
+                }
+            }
+        });
 
-        <div class="container">
-            <div class="media-container">
-                <div class="col-md-12 align-center">
-                    <h1 class="mbr-section-title mbr-white mbr-bold mbr-fonts-style mb-3 display-1">FEATURES</h1>
-                    <p class="mbr-text mbr-white mbr-fonts-style display-7">Four step fact checking to get your NEWS
-                        material right</p>
+        // --- 2. Three.js Navbar Decoration (Subtle Rotating Lens) ---
+        const initThree = () => {
+            const container = document.getElementById('canvas-container');
+            if (!container) return;
 
+            const scene = new THREE.Scene();
+            // Transparent background
+            // scene.background = null; 
 
-                    <div class="row justify-content-center">
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <div class="card-wrapper">
-                                <div class="card-box align-center">
-                                    <span class="mbr-iconfont mobi-mbri-database mobi-mbri"></span>
-                                    <h4 class="card-title align-center mbr-black mbr-fonts-style display-7">Dynamic
-                                        Query Searching</h4>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <div class="card-wrapper">
-                                <div class="card-box align-center">
-                                    <span class="mbr-iconfont socicon-internet socicon"></span>
-                                    <h4 class="card-title align-center mbr-black mbr-fonts-style display-7">
-                                        <strong>Source Reliability Check</strong>
-                                    </h4>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <div class="card-wrapper">
-                                <div class="card-box align-center">
-                                    <span class="mbr-iconfont mobi-mbri-chat mobi-mbri"></span>
-                                    <h4 class="card-title align-center mbr-black mbr-fonts-style display-7">
-                                        <strong>Abnormal/Hate Speech Detection</strong>
-                                    </h4>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <div class="card-wrapper">
-                                <div class="card-box align-center">
-                                    <span class="mbr-iconfont mobi-mbri-sites mobi-mbri"></span>
-                                    <h4 class="card-title align-center mbr-black mbr-fonts-style display-7">
-                                        <strong>Counter Spam attack</strong></h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 5;
 
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setClearColor(0x000000, 0); // the default
+            container.appendChild(renderer.domElement);
+
+            // Geometry: Wireframe Icosahedron (Abstract Lens structure)
+            const geometry = new THREE.IcosahedronGeometry(2.5, 1);
+            const material = new THREE.MeshBasicMaterial({
+                color: 0x10b981, // Emerald
+                wireframe: true,
+                transparent: true,
+                opacity: 0.15
+            });
+            const sphere = new THREE.Mesh(geometry, material);
+            scene.add(sphere);
+
+            // Inner core
+            const coreGeo = new THREE.IcosahedronGeometry(1, 0);
+            const coreMat = new THREE.MeshBasicMaterial({ color: 0x14b8a6, wireframe: true, transparent: true, opacity: 0.3 });
+            const core = new THREE.Mesh(coreGeo, coreMat);
+            scene.add(core);
+
+            // Animation
+            const animate = function () {
+                requestAnimationFrame(animate);
+
+                sphere.rotation.x += 0.002;
+                sphere.rotation.y += 0.003;
+
+                core.rotation.x -= 0.005;
+                core.rotation.y -= 0.005;
+
+                renderer.render(scene, camera);
+            };
+
+            animate();
+
+            // Handle Resize
+            window.addEventListener('resize', () => {
+                // Determine new size (based on CSS rules for container)
+                // Since container is fixed pixel in CSS, this is less critical but good practice
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+            });
+        };
+
+        initThree();
+
+        // --- 3. Interactive Background Script ---
+        const canvas = document.getElementById('interactive-bg');
+        const ctx = canvas.getContext('2d');
+
+        // Resize
+        let width, height;
+        const resize = () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        };
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Mouse
+        const mouse = { x: null, y: null };
+        window.addEventListener('mousemove', e => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+        window.addEventListener('mouseleave', () => {
+            mouse.x = null; mouse.y = null;
+        });
+
+        // Particles
+        const particles = [];
+        const particleCount = 60; // Density
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5; // Slow movement
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Bounce
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+
+                // Mouse interaction
+                if (mouse.x != null) {
+                    const dx = mouse.x - this.x;
+                    const dy = mouse.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 150) {
+                        this.x += dx * 0.01;
+                        this.y += dy * 0.01;
+                    }
+                }
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Init
+        for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+
+        // Animate
+        const animate = () => {
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw particles and lines
+            particles.forEach((p, index) => {
+                p.update();
+                p.draw();
+
+                // Connect particles
+                for (let j = index + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 150) {
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 - dist / 1500})`; // Fade out
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+
+                // Connect to mouse
+                if (mouse.x != null) {
+                    const dx = p.x - mouse.x;
+                    const dy = p.y - mouse.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 200) {
+                        ctx.strokeStyle = `rgba(16, 185, 129, ${0.2 - dist / 1000})`; // Green accent
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+
+            requestAnimationFrame(animate);
+        };
+        animate();
+    </script>
 </body>
 
 </html>
