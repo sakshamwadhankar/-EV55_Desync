@@ -23,9 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-+9twpxb&oe1=@9ex4e6yc+3i#y7(p6bt(389vl*=d&c(u!35k)"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
+
+print("🚀 TruthLens backend started on port 7860")
 
 # Application definition
 

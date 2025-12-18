@@ -34,4 +34,5 @@ RUN mkdir -p /app/static root && chmod 777 /app/static root
 EXPOSE 7860
 
 # Run Migrations and Gunicorn
-CMD python manage.py migrate && gunicorn news_guardian.wsgi:application --bind 0.0.0.0:7860 --workers 2 --timeout 120
+# Run Migrations and Gunicorn in a shell
+CMD ["sh", "-c", "python manage.py migrate && gunicorn news_guardian.wsgi:application --bind 0.0.0.0:7860 --workers 2 --timeout 120"]
