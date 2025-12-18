@@ -11,6 +11,7 @@ from transformers import pipeline
 import numpy as np
 import datetime
 import time
+from statistics import mean
 
 # Load models globally to avoid reloading on every request (Singleton pattern)
 try:
@@ -68,6 +69,24 @@ class FactCheckerService:
                     urls = [r['href'] for r in results]
             except Exception as e:
                 print(f"DEBUG: Attempt 3 Failed: {e}")
+
+        # Strategy 4: Entity & Noun Extraction (Spacy)
+        if not urls:
+            try:
+                print("DEBUG: Attempt 4 - Entity/Noun Extraction")
+                doc = nlp(query)
+                # Keep significant words: Proper nouns, nouns, verbs (excluding stop words)
+                keywords = [token.text for token in doc if not token.is_stop and token.pos_ in ['PROPN', 'NOUN', 'VERB']]
+                entity_query = " ".join(keywords)
+                
+                print(f"DEBUG: Extracted Keywords: {entity_query}")
+                
+                if entity_query and len(entity_query.split()) > 0:
+                    with DDGS() as ddgs:
+                        results = list(ddgs.text(entity_query, max_results=num_results))
+                        urls = [r['href'] for r in results]
+            except Exception as e:
+                print(f"DEBUG: Attempt 4 Failed: {e}")
 
         print(f"DEBUG: Total URLs Found: {len(urls)}")
         return list(set(urls)) # Deduplicate
@@ -146,49 +165,85 @@ class FactCheckerService:
 
     @staticmethod
     def check_similarity(query, summaries):
-        """Calculates cosine similarity with safety checks."""
+        """Calculates cosine similarity using SentenceTransformer (SBERT)."""
         if not summaries:
             return []
             
         similarities = []
-        print("DEBUG: Calculating Similarities...")
-        
-        for i, summary in enumerate(summaries):
-            try:
-                # Ensure query and summary are strings
-                q_vec = nlp(str(query)).vector
-                s_vec = nlp(str(summary)).vector
-                
-                # Check for zero vectors (empty models or unknown words)
-                if np.all(q_vec == 0) or np.all(s_vec == 0):
-                   print(f"DEBUG: Zero vector for item {i}")
-                   similarities.append(0.0)
-                   continue
-
-                sim = cosine_similarity([q_vec], [s_vec])[0][1]
-                similarities.append(float(sim))
-            except Exception as e:
-                print(f"DEBUG: Similarity Error for item {i}: {e}")
-                similarities.append(0.0)
-                
-        return similarities
-
-    @staticmethod
-    def classify_verdict(avg_similarity, query):
-        """Robust Verdict Classification."""
-        threshold = 0.38
-        print(f"DEBUG: Verdict Check - Avg Sim: {avg_similarity}")
+        print("DEBUG: Calculating Similarities (SBERT)...")
         
         try:
-            if avg_similarity < threshold:
-                 return "We can classify the news as Fake"
-            else:
-                # Secondary: Hate Speech
+            # Encode query and all summaries in one batch for speed
+            # sentence_model.encode returns numpy arrays
+            q_emb = sentence_model.encode(str(query))
+            s_embs = sentence_model.encode(summaries)
+            
+            # Calculate cosine similarity
+            # cosine_similarity expects 2D arrays. 
+            # q_emb.reshape(1, -1) vs s_embs (n, 1024)
+            sim_scores = cosine_similarity([q_emb], s_embs)[0]
+            
+            # Convert to float list
+            similarities = [float(s) for s in sim_scores]
+            
+            print(f"DEBUG: SBERT Scores: {[f'{s:.3f}' for s in similarities]}")
+            return similarities
+
+        except Exception as e:
+            print(f"DEBUG: SBERT Similarity Error: {e}")
+            return [0.0] * len(summaries)
+
+    @staticmethod
+    def classify_verdict(avg_similarity, max_similarity, source_count, query):
+        """
+        Robust Verdict Classification with 5-Tier Confidence Logic.
+        
+        Tiers:
+        1. Strong True: max_sim >= 0.45 and sources >= 1
+        2. Likely True: avg_sim >= 0.25 and max_sim >= 0.30
+        3. Unverified: Default safe state (low confidence, ambiguity)
+        4. Strong Fake: max_sim <= 0.15 and sources >= 3 (Negative Confirmation)
+        5. Insufficient Data: sources == 0 (Handled by caller usually)
+        """
+        print(f"DEBUG: Verdict Check - Avg: {avg_similarity:.4f}, Max: {max_similarity:.4f}, Sources: {source_count}")
+        
+        # Default State
+        verdict = "Unverified: No strong confirmation or contradiction found."
+        rule_triggered = "Default (Unverified)"
+
+        try:
+            # 1. Strong True
+            if max_similarity >= 0.45 and source_count >= 1:
+                verdict = "The News is True (High Confidence)"
+                rule_triggered = "Strong True (Max >= 0.45)"
+            
+            # 2. Likely True
+            elif avg_similarity >= 0.25 and max_similarity >= 0.30:
+                verdict = "The News is Likely True (Medium Confidence)"
+                rule_triggered = "Likely True (Avg >= 0.25, Max >= 0.30)"
+            
+            # 4. Strong Fake (Negative Confirmation)
+            # We ONLY return Fake if we found plenty of sources (3+) and NONE of them matched well.
+            # This implies the claim is likely made up or not reflected in reputable news.
+            elif max_similarity <= 0.15 and source_count >= 3:
+                verdict = "We can classify the news as Fake (Low Similarity across multiple sources)"
+                rule_triggered = "Strong Fake (Max <= 0.15, Sources >= 3)"
+            
+            # Additional Safety Checks (Keep existing classifiers BUT treat them as modifiers)
+            # Note: We prioritize the similarity verdict, but if text classification flags hate/profanity, 
+            # we might want to append that warning or override if it's very dangerous.
+            # For now, let's keep the user's logic pure: "Fake requires NEGATIVE CONFIRMATION".
+            # Hate speech is a property of the text, not its truthfulness, but often correlated with Fake.
+            # We will perform these checks only if we haven't already marked it as True.
+            
+            if "True" not in verdict:
+                 # Secondary: Hate Speech
                 try:
                     labels = ['hate speech', 'non-hate speech']
                     result = classifier(query, labels)
                     if result['labels'][0] == 'hate speech':
-                        return "We can classify the news as Fake (Hate Speech Detected)"
+                        verdict = "We can classify the news as Fake (Hate Speech Detected)"
+                        rule_triggered = "Hate Speech Classifier"
                 except Exception as e:
                      print(f"DEBUG: Classifier Error (Hate Speech): {e}")
 
@@ -197,11 +252,14 @@ class FactCheckerService:
                     labels_profanity = ['Not Profane', 'Profane']
                     result_profanity = classifier(query, labels_profanity)
                     if result_profanity['labels'][0] == 'Profane':
-                        return "We can classify the news as Fake (Profanity Detected)"
+                        verdict = "We can classify the news as Fake (Profanity Detected)"
+                        rule_triggered = "Profanity Classifier"
                 except Exception as e:
                      print(f"DEBUG: Classifier Error (Profanity): {e}")
-                
-                return "The News is True"
+
+            print(f"DEBUG: Final Verdict: '{verdict}' | Rule: {rule_triggered}")
+            return verdict
+
         except Exception as e:
             print(f"DEBUG: General Verdict Error: {e}")
             return "Unable to Verify (System Error)"
