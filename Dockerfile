@@ -18,7 +18,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
     python -m spacy download en_core_web_sm && \
-    python -m nltk.downloader punkt
+    python -m nltk.downloader punkt && \
+    python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
 
 # Copy project
 COPY . .
@@ -32,5 +33,5 @@ RUN mkdir -p /app/static root && chmod 777 /app/static root
 # Expose port (Hugging Face Spaces uses 7860)
 EXPOSE 7860
 
-# Run Gunicorn
-CMD ["gunicorn", "news_guardian.wsgi:application", "--bind", "0.0.0.0:7860", "--workers", "2", "--timeout", "120"]
+# Run Migrations and Gunicorn
+CMD python manage.py migrate && gunicorn news_guardian.wsgi:application --bind 0.0.0.0:7860 --workers 2 --timeout 120

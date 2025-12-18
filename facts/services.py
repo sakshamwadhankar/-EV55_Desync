@@ -14,10 +14,18 @@ import time
 from statistics import mean
 
 # Load models globally to avoid reloading on every request (Singleton pattern)
+# These models are downloaded from the Hugging Face Hub / Spacy servers
+# and cached locally. In the Dockerfile, we pre-download them.
 try:
     nlp = spacy.load("en_core_web_sm")
-    # Using a lighter model for production (approx 80MB vs 1.3GB)
-    sentence_model = SentenceTransformer('all-MiniLM-L6-v2')
+    # PRIMARY BACKEND MODEL: SentenceTransformer (all-MiniLM-L6-v2)
+    # This is the 'brain' that calculates semantic similarity.
+    sentence_model = SentenceTransformer('all-MiniLM-L6-v2') 
+    
+    # NOTE: If you have a custom trained model.pkl, load it here:
+    # import joblib
+    # classifier_model = joblib.load('path/to/model.pkl')
+    
     # classifier = pipeline('zero-shot-classification') # DISABLED to save memory
 except Exception as e:
     print(f"Warning: Models failed to load. Ensure dependencies are installed. Error: {e}")

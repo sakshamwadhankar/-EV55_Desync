@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "corsheaders", # Added for frontend connection
+    "corsheaders", 
+    "facts",
 ]
 
 MIDDLEWARE = [
@@ -53,7 +54,11 @@ MIDDLEWARE = [
 
 # CORS & CSRF Settings for Production
 CORS_ALLOW_ALL_ORIGINS = True
-CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com', 'https://*.netlify.app']
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.onrender.com', 
+    'https://*.netlify.app', 
+    'https://*.hf.space'
+]
 
 ROOT_URLCONF = "news_guardian.urls"
 
