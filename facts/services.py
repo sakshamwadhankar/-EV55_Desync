@@ -15,10 +15,10 @@ from statistics import mean
 
 # Load models globally to avoid reloading on every request (Singleton pattern)
 try:
-    nlp = spacy.load("en_core_web_md")
-    # Using a lighter model or caching it is recommended for production
-    sentence_model = SentenceTransformer('stsb-roberta-large')
-    classifier = pipeline('zero-shot-classification')
+    nlp = spacy.load("en_core_web_sm")
+    # Using a lighter model for production (approx 80MB vs 1.3GB)
+    sentence_model = SentenceTransformer('all-MiniLM-L6-v2')
+    # classifier = pipeline('zero-shot-classification') # DISABLED to save memory
 except Exception as e:
     print(f"Warning: Models failed to load. Ensure dependencies are installed. Error: {e}")
 
@@ -238,24 +238,24 @@ class FactCheckerService:
             
             if "True" not in verdict:
                  # Secondary: Hate Speech
-                try:
-                    labels = ['hate speech', 'non-hate speech']
-                    result = classifier(query, labels)
-                    if result['labels'][0] == 'hate speech':
-                        verdict = "We can classify the news as Fake (Hate Speech Detected)"
-                        rule_triggered = "Hate Speech Classifier"
-                except Exception as e:
-                     print(f"DEBUG: Classifier Error (Hate Speech): {e}")
+                # try:
+                #     labels = ['hate speech', 'non-hate speech']
+                #     result = classifier(query, labels)
+                #     if result['labels'][0] == 'hate speech':
+                #         verdict = "We can classify the news as Fake (Hate Speech Detected)"
+                #         rule_triggered = "Hate Speech Classifier"
+                # except Exception as e:
+                #      print(f"DEBUG: Classifier Error (Hate Speech): {e}")
 
                 # Tertiary: Profanity
-                try:
-                    labels_profanity = ['Not Profane', 'Profane']
-                    result_profanity = classifier(query, labels_profanity)
-                    if result_profanity['labels'][0] == 'Profane':
-                        verdict = "We can classify the news as Fake (Profanity Detected)"
-                        rule_triggered = "Profanity Classifier"
-                except Exception as e:
-                     print(f"DEBUG: Classifier Error (Profanity): {e}")
+                # try:
+                #     labels_profanity = ['Not Profane', 'Profane']
+                #     result_profanity = classifier(query, labels_profanity)
+                #     if result_profanity['labels'][0] == 'Profane':
+                #         verdict = "We can classify the news as Fake (Profanity Detected)"
+                #         rule_triggered = "Profanity Classifier"
+                # except Exception as e:
+                #      print(f"DEBUG: Classifier Error (Profanity): {e}")
 
             print(f"DEBUG: Final Verdict: '{verdict}' | Rule: {rule_triggered}")
             return verdict
