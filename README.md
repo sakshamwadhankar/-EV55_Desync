@@ -14,7 +14,7 @@ pinned: false
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
 
-**TruthLens** (formerly *News Guardian*) is a robust web application designed to combat misinformation. It leverages advanced **Web Scraping**, **Natural Language Processing (NLP)**, and **Machine Learning** to verify news claims in real-time by cross-referencing them against credible sources on the live internet.
+**TruthLens** (formerly *News Guardian*) is a robust web application designed to combat misinformation. It leverages advanced **Web Scraping**, **Natural Language Processing (NLP)**, and **Machine Learning** to verify news claims in real-time by cross-references them against credible sources on the live internet.
 
 ---
 

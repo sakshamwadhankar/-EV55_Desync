@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- App Theme Colors -->
+    <color name="background_charcoal">#1E1E1E</color>
+    <color name="text_off_white">#F5F5F5</color>
+    <color name="accent_emerald">#10B981</color>
+    <color name="verdict_fake_red">#EF5350</color>
+    <color name="verdict_unverified_gray">#BDBDBD</color>
+    <color name="verdict_true_green">#10B981</color>
+    <color name="input_background">#2C2C2C</color>
+</resources>

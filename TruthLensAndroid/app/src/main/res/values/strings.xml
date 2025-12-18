@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">TruthLens</string>
+    <string name="subtitle_text">Verify news claims instantly</string>
+    <string name="hint_claim">Enter news claim to verify...</string>
+    <string name="btn_verify">Verify</string>
+    <string name="result_placeholder">Results will appear here</string>
+    <string name="loading_text">Analyzing claim...</string>
+    <string name="network_error">Unable to verify. Check connection.</string>
+</resources>
