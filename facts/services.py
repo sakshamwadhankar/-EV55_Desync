@@ -245,7 +245,8 @@ class FactCheckerService:
             # We will perform these checks only if we haven't already marked it as True.
             
             if "True" not in verdict:
-                 # Secondary: Hate Speech
+                # Secondary: Hate Speech (Currently Disabled for Memory)
+                pass
                 # try:
                 #     labels = ['hate speech', 'non-hate speech']
                 #     result = classifier(query, labels)
