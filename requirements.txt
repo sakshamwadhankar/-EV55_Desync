@@ -1,7 +1,13 @@
+django
 pandas
-matplotlib
-seaborn
+numpy
+duckduckgo-search
+sentence-transformers
 wordcloud
-scikit-learn
+matplotlib
+beautifulsoup4
+sumy
+spacy
+transformers
 nltk
 requests
