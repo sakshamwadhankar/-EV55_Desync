@@ -1,61 +1,104 @@
-# TruthLens 1.0.0
+# TruthLens 🔍
+> **Advanced Real-Time Fake News Detection & Verification System**
 
-![alt text ](https://img.shields.io/badge/Python-3.10-blue.svg)
-![alt text ](https://img.shields.io/badge/Django-4.1.7-006400.svg)
-![alt text ](https://img.shields.io/badge/BeautifulSoup4-4.12.0-800080.svg)
-![alt text ](https://img.shields.io/badge/SentenceTransformers-2.22-FF1493.svg)
-![alt text ](https://img.shields.io/badge/NLTK-3.8.1-success.svg)
-![alt text ](https://img.shields.io/badge/spaCy-3.5.1-red.svg)
-![alt text ](https://img.shields.io/badge/sumy-0.11.1-white.svg)
-![alt text ](https://img.shields.io/badge/numpy-1.24.2-blueviolet.svg)
-![alt text ](https://img.shields.io/badge/pandas-1.5.3-ff69b4.svg)
-![alt text ](https://img.shields.io/badge/kylian_mbappe-23.12.98-FFA500.svg)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python)
+![Django](https://img.shields.io/badge/Django-4.1%2B-092E20?style=for-the-badge&logo=django)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
 
+**TruthLens** (formerly *News Guardian*) is a robust web application designed to combat misinformation. It leverages advanced **Web Scraping**, **Natural Language Processing (NLP)**, and **Machine Learning** to verify news claims in real-time by cross-referencing them against credible sources on the live internet.
 
+---
 
-Built for the intra college hackathon for KAVACH 2023, TruthLens 1.0.0 is your very own source of real-time and dynamic fact checking and fake news detection tool. We work with the aim of this being always free and forever.
+## 🚀 Key Features
 
-Fact checking your information, whenever you want, wherever you go!
+*   **Real-Time Verification**: Instantly verifies claims by searching the live web using DuckDuckGo.
+*   **Intelligent Scraping**: Robustly extracts content from diverse news sources, handling partial data and anti-bot measures.
+*   **AI-Powered Analysis**:
+    *   **Semantic Similarity**: Uses `SpaCy` and `Sentence-Transformers` to compare claims with gathered evidence.
+    *   **Summarization**: Automatically condenses long articles into digestible summaries using LSA.
+    *   **Zero-Shot Classification**: Detects hate speech, profanity, and other harmful content patterns.
+*   **Visual Context**: Generates dynamic **WordClouds** to visualize the key themes of the verified news.
+*   **Graceful Degradation**: Smart fallback logic ensures users get results even if some data sources fail.
 
+---
 
+## 🛠️ Technology Stack
 
-![alt text](https://raw.githubusercontent.com/sjarunvenkat/newsguardian/main/newsguardian%20welcome%20page.png)
+| Component | Technology |
+| :--- | :--- |
+| **Backend Framework** | Django (Python) |
+| **Frontend** | HTML5, Bootstrap 5, Custom CSS |
+| **Search Engine** | DuckDuckGo (`duckduckgo-search`) |
+| **Scraping** | `requests`, `BeautifulSoup4` |
+| **NLP Core** | `spaCy` (`en_core_web_md`), `sumy` (LSA) |
+| **Machine Learning** | `sentence-transformers` (RoBERTa), Hugging Face Pipeline |
+| **Visualization** | `wordcloud`, `matplotlib` |
 
+---
 
+## 🏗️ Architecture
 
+TruthLens follows a clean **Service-Oriented Architecture** within the standard Django MVT pattern:
 
-# Usage
-* Navigate to the root directory of the project.
-* Run manage.py to start the program.
-* Enter the news headline and article text when prompted.
-* The program will analyze the text and determine if it is likely to be fake news or not.
+*   **Service Layer (`facts/services.py`)**: Encapsulates all complex business logic (Search, Scrape, NLP, Verification). This ensures the views remain lightweight and the logic is reusable.
+*   **Controller (`facts/views.py`)**: Handles HTTP requests, orchestrates the service calls, and manages the data flow to the template.
+*   **Prototypes (`research_prototypes/`)**: Contains isolated scripts for debugging and testing the search/scrape pipeline independently.
 
-# Execution
+---
 
-To obtain this project in your system, run this snippet (make sure to have Git installed in your system)
+## 💻 Installation & Usage
+
+### Prerequisites
+*   Python 3.10 or higher
+*   Git
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/sakshamwadhankar/-EV55_Desync.git
+cd -EV55_Desync
 ```
-git clone https://github.com/sjarunvenkat/newsguardian.git
-```
-And then run this below after creating a virtual environment.
-```
-cd newsguardian
+
+### 2. Install Dependencies
+It is recommended to use a virtual environment.
+```bash
+pip install -r requirements.txt
+python -m spacy download en_core_web_md
 ```
 
+### 3. Run Migrations
+```bash
+python manage.py migrate
 ```
+
+### 4. Start the Server
+```bash
 python manage.py runserver
 ```
-# Colab Notebook
+Access the application at **`http://127.0.0.1:8000/`**
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1bwGiFBhhzbXn3QYJ-oZxaF7OoqxgKFHw?usp=sharing/)
+---
 
-# Flow of Work
-![alt text](https://raw.githubusercontent.com/sjarunvenkat/newsguardian/main/Flowchart%20-%20newsguardian_.jpg)
+## 📝 How it Works
 
-# Future Scope
+1.  **Input**: User enters a news headline or claim (e.g., *"India is under world war"*).
+2.  **Search**: The system queries DuckDuckGo for relevant, recent articles.
+3.  **Process**:
+    *   Top URLs are scrapped for content.
+    *   Text is filtered, cleaned, and summarized.
+4.  **Verify**:
+    *   Cosine similarity checks alignment between the claim and the evidence.
+    *   Safety classifiers check for hate speech or profanity.
+5.  **Result**: The user receives a **True/Fake verdict**, a confidence summary, source links, and a context word cloud.
 
-* Code-Mixed statements in text
-* Temporal News and Profanity Checking functionality
-* Exploration of Quantum Computing Techniques
+---
 
-# Making Contributions
-Contributions to TruthLens are welcome. If you find a bug or have an idea for a new feature, please open an issue or submit a pull request.
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+---
+
+## 📄 License
+
+This project is open-source and available under the MIT License.
