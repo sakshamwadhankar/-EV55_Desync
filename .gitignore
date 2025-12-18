@@ -1,0 +1,8 @@
+*.csv
+*.txt
+!requirements.txt
+__pycache__/
+*.log
+debug_output.txt
+files.txt
+cwd.txt
