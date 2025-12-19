@@ -12,6 +12,12 @@ import numpy as np
 import datetime
 import time
 from statistics import mean
+import random
+
+try:
+    from googlesearch import search as google_search
+except ImportError:
+    google_search = None
 
 # Load models globally to avoid reloading on every request (Singleton pattern)
 # These models are downloaded from the Hugging Face Hub / Spacy servers
@@ -96,6 +102,19 @@ class FactCheckerService:
             except Exception as e:
                 print(f"DEBUG: Attempt 4 Failed: {e}")
 
+        # Strategy 5: Google Fallback (If DDG fails)
+        if not urls and google_search:
+             try:
+                print("DEBUG: Attempt 5 - Google Search Fallback")
+                # googlesearch-python returns a generator of URLs
+                g_results = google_search(query, num_results=num_results, advanced=True)
+                # advanced=True returns Result objects with .url, .title, .description
+                # advanced=False (default) returns strings
+                # Let's use default for simplicity
+                urls = list(google_search(query, num_results=num_results))
+             except Exception as e:
+                print(f"DEBUG: Google Fallback Failed: {e}")
+
         print(f"DEBUG: Total URLs Found: {len(urls)}")
         return list(set(urls)) # Deduplicate
 
@@ -103,10 +122,17 @@ class FactCheckerService:
     def scrape_and_summarize(urls, query_text):
         """Scrapes URLs with robust error handling and lower thresholds."""
         # Rotating User-Agents could be added here, but a standard modern one usually works
+        user_agents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0'
+        ]
+        
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
+            'User-Agent': random.choice(user_agents),
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5'
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Referer': 'https://www.google.com/'
         }
         
         summaries = []

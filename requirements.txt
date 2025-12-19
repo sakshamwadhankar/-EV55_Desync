@@ -15,3 +15,4 @@ gunicorn
 django-cors-headers
 whitenoise
 lxml_html_clean
+googlesearch-python
