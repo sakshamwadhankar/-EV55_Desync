@@ -60,7 +60,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = [
     'https://*.onrender.com', 
     'https://*.netlify.app', 
-    'https://*.hf.space'
+    'https://*.hf.space',
+    'https://*.railway.app',
+    'https://*.up.railway.app'
 ]
 
 ROOT_URLCONF = "news_guardian.urls"
