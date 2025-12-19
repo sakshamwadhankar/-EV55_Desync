@@ -21,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
 
     // TODO: REPLACE WITH YOUR ACTUAL BACKEND URL
-    private static final String BASE_URL = "https://sakshamwadhankar21-truthlens-backend.hf.space/";
+    private static final String BASE_URL = "https://anonymous-krysta-sakshamwadhankar-fe5fe52c.koyeb.app/";
 
     private TextInputEditText etClaim;
     private MaterialButton btnVerify;

@@ -6,7 +6,7 @@
 // CONFIGURATION
 // Replace this with your deployed backend URL (e.g., https://truthlens-backend.onrender.com)
 // If running locally with CORS enabled, you might use http://127.0.0.1:8000/
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://anonymous-krysta-sakshamwadhankar-fe5fe52c.koyeb.app";
 
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("analysis-form");
