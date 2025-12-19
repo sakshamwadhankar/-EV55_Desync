@@ -62,7 +62,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.netlify.app', 
     'https://*.hf.space',
     'https://*.railway.app',
-    'https://*.up.railway.app'
+    'https://*.up.railway.app',
+    'https://*.koyeb.app'
 ]
 
 ROOT_URLCONF = "news_guardian.urls"
