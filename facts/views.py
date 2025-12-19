@@ -9,6 +9,9 @@ import io
 import urllib, base64
 import numpy as np
 import pandas as pd
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 def home(request):
     """
@@ -123,3 +126,55 @@ def home(request):
 def about(request):
     """Renders the About page with team details."""
     return render(request, 'about.html')
+
+@csrf_exempt
+def api_verify_claim(request):
+    """
+    API Endpoint for external clients (Desktop/Android).
+    Accepts JSON: {"claim": "some text"}
+    Returns JSON: {"verdict": "...", "confidence": "...", "sources": 5}
+    """
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            user_query = data.get('claim', '').strip()
+
+            if not user_query:
+                return JsonResponse({"error": "Empty claim"}, status=400)
+
+            # Re-use Service Logic
+            search_query = FactCheckerService.get_date_range_query(user_query)
+            top_urls = FactCheckerService.search_web(search_query)
+            summaries, valid_urls = FactCheckerService.scrape_and_summarize(top_urls, user_query)
+
+            verdict = "Insufficient Data"
+            confidence = "Low"
+            
+            if summaries:
+                 # Check similarity
+                similarities = FactCheckerService.calculate_similarity(summaries, user_query)
+                avg_similarity = np.mean(similarities)
+                max_similarity = np.max(similarities)
+                source_count = len(valid_urls)
+                
+                # Get detailed verdict string
+                full_verdict = FactCheckerService.classify_verdict(avg_similarity, max_similarity, source_count, user_query)
+                
+                # Parse simplified verdict/confidence for UI
+                verdict = full_verdict
+                if "True" in full_verdict:
+                    confidence = "High" if "High" in full_verdict else "Medium"
+                elif "Fake" in full_verdict:
+                     confidence = "High"
+            
+            return JsonResponse({
+                "verdict": verdict,
+                "confidence": confidence,
+                "sources": len(valid_urls),
+                "details": "Verified against live web sources."
+            })
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    
+    return JsonResponse({"error": "Method not allowed"}, status=405)
