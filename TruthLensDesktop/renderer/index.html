@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TruthLens Desktop</title>
+    <!-- Use Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <span class="lens-icon">◉</span> TruthLens
+            </div>
+            <p class="tagline">Verify news claims instantly</p>
+        </header>
+
+        <main>
+            <div class="search-box">
+                <input type="text" id="claimInput" placeholder="Paste a news claim or headline here..."
+                    autocomplete="off">
+                <button id="verifyBtn">Verify</button>
+            </div>
+
+            <div id="loader" class="loader-container d-none">
+                <div class="spinner"></div>
+                <p>Analyzing cross-references...</p>
+            </div>
+
+            <div id="resultCard" class="result-card d-none">
+                <div class="verdict-header">
+                    <span class="label">LEGAL VERDICT</span>
+                    <h2 id="verdictText">Strong True</h2>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">Confidence</span>
+                        <span id="confidenceValue" class="stat-value">92%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Sources Found</span>
+                        <span id="sourceCount" class="stat-value">12</span>
+                    </div>
+                </div>
+
+                <div class="info-footer">
+                    <p>Verified via TruthLens Backend API</p>
+                </div>
+            </div>
+
+            <div id="errorBox" class="error-box d-none">
+                <p id="errorText">Unable to connect to server.</p>
+            </div>
+        </main>
+
+        <footer>
+            &copy; 2025 TruthLens System | AI-Powered Verification
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

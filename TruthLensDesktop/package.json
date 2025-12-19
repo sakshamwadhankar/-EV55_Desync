@@ -1,0 +1,30 @@
+{
+    "name": "truthlens-desktop",
+    "version": "1.0.0",
+    "description": "TruthLens Desktop - Windows Client for Fake News Detection",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "build": "electron-builder --win"
+    },
+    "author": "Antigravity",
+    "license": "ISC",
+    "devDependencies": {
+        "electron": "^28.0.0",
+        "electron-builder": "^24.9.1"
+    },
+    "dependencies": {
+        "axios": "^1.6.2"
+    },
+    "build": {
+        "appId": "com.truthlens.app",
+        "productName": "TruthLens",
+        "directories": {
+            "output": "build"
+        },
+        "win": {
+            "target": "nsis",
+            "icon": "renderer/assets/icon.ico"
+        }
+    }
+}

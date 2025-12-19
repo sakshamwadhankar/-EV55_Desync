@@ -26,3 +26,10 @@ venv.bak/
 # IDEs
 .vscode/
 .idea/
+
+# Node.js
+node_modules/
+
+# Android Build
+TruthLensAndroid/app/build/
+
