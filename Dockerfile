@@ -36,4 +36,9 @@ EXPOSE 8000
 
 # Run Migrations and Gunicorn
 # Run Migrations and Gunicorn in a shell
-CMD ["sh", "-c", "python manage.py migrate && gunicorn news_guardian.wsgi:application --bind 0.0.0.0:8000 --workers 1 --timeout 120"]
+# Create empty DB file to avoid permission issues
+RUN touch db.sqlite3 && chmod 777 db.sqlite3
+
+# Run Migrations and Gunicorn
+# Using --timeout 400 to allow heavy models to download/load if needed
+CMD ["sh", "-c", "python manage.py migrate && gunicorn news_guardian.wsgi:application --bind 0.0.0.0:8000 --workers 1 --timeout 400"]
