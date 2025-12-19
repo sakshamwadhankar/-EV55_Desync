@@ -1,5 +1,6 @@
 // TruthLens Desktop - Renderer Logic
 const API_BASE_URL = "https://sakshamwadhankar21-truthlens-backend.hf.space";
+// const API_BASE_URL = "http://127.0.0.1:8000";
 
 const claimInput = document.getElementById('claimInput');
 const verifyBtn = document.getElementById('verifyBtn');
