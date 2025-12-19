@@ -23,8 +23,7 @@
             "output": "build"
         },
         "win": {
-            "target": "nsis",
-            "icon": "renderer/assets/icon.ico"
+            "target": "nsis"
         }
     }
 }
