@@ -19,22 +19,23 @@ try:
 except ImportError:
     google_search = None
 
-# Load models globally to avoid reloading on every request (Singleton pattern)
-# These models are downloaded from the Hugging Face Hub / Spacy servers
-# and cached locally. In the Dockerfile, we pre-download them.
-try:
-    nlp = spacy.load("en_core_web_sm")
-    # PRIMARY BACKEND MODEL: SentenceTransformer (all-MiniLM-L6-v2)
-    # This is the 'brain' that calculates semantic similarity.
-    sentence_model = SentenceTransformer('all-MiniLM-L6-v2') 
-    
-    # NOTE: If you have a custom trained model.pkl, load it here:
-    # import joblib
-    # classifier_model = joblib.load('path/to/model.pkl')
-    
-    # classifier = pipeline('zero-shot-classification') # DISABLED to save memory
-except Exception as e:
-    print(f"Warning: Models failed to load. Ensure dependencies are installed. Error: {e}")
+# Models are now lazy-loaded to prevent startup timeouts
+nlp = None
+sentence_model = None
+
+def get_sentence_model():
+    global sentence_model
+    if sentence_model is None:
+        print("DEBUG: Loading SBERT Model (Lazy Load)...")
+        sentence_model = SentenceTransformer('all-MiniLM-L6-v2')
+    return sentence_model
+
+def get_nlp_model():
+    global nlp
+    if nlp is None:
+        print("DEBUG: Loading SpaCy Model (Lazy Load)...")
+        nlp = spacy.load("en_core_web_sm")
+    return nlp
 
 class FactCheckerService:
     @staticmethod
@@ -88,7 +89,8 @@ class FactCheckerService:
         if not urls:
             try:
                 print("DEBUG: Attempt 4 - Entity/Noun Extraction")
-                doc = nlp(query)
+                local_nlp = get_nlp_model()
+                doc = local_nlp(query)
                 # Keep significant words: Proper nouns, nouns, verbs (excluding stop words)
                 keywords = [token.text for token in doc if not token.is_stop and token.pos_ in ['PROPN', 'NOUN', 'VERB']]
                 entity_query = " ".join(keywords)
@@ -209,8 +211,9 @@ class FactCheckerService:
         try:
             # Encode query and all summaries in one batch for speed
             # sentence_model.encode returns numpy arrays
-            q_emb = sentence_model.encode(str(query))
-            s_embs = sentence_model.encode(summaries)
+            model = get_sentence_model()
+            q_emb = model.encode(str(query))
+            s_embs = model.encode(summaries)
             
             # Calculate cosine similarity
             # cosine_similarity expects 2D arrays. 

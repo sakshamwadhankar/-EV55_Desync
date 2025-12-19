@@ -36,4 +36,4 @@ EXPOSE 8000
 
 # Run Migrations and Gunicorn
 # Run Migrations and Gunicorn in a shell
-CMD ["sh", "-c", "python manage.py migrate && gunicorn news_guardian.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120"]
+CMD ["sh", "-c", "python manage.py migrate && gunicorn news_guardian.wsgi:application --bind 0.0.0.0:8000 --workers 1 --timeout 120"]
