@@ -31,8 +31,9 @@ RUN python manage.py collectstatic --noinput
 RUN mkdir -p /app/static root && chmod 777 /app/static root
 
 # Expose port (Hugging Face Spaces uses 7860)
-EXPOSE 7860
+# Expose port (Standard is 8000)
+EXPOSE 8000
 
 # Run Migrations and Gunicorn
 # Run Migrations and Gunicorn in a shell
-CMD ["sh", "-c", "python manage.py migrate && gunicorn news_guardian.wsgi:application --bind 0.0.0.0:7860 --workers 2 --timeout 120"]
+CMD ["sh", "-c", "python manage.py migrate && gunicorn news_guardian.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120"]
