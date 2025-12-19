@@ -1,5 +1,5 @@
 // TruthLens Desktop - Renderer Logic
-const API_URL = "https://sakshamwadhankar21-truthlens-backend.hf.space/verify";
+const API_BASE_URL = "https://sakshamwadhankar21-truthlens-backend.hf.space";
 
 const claimInput = document.getElementById('claimInput');
 const verifyBtn = document.getElementById('verifyBtn');
@@ -29,7 +29,7 @@ async function verifyClaim() {
     verifyBtn.disabled = true;
 
     try {
-        const response = await fetch(API_URL, {
+        const response = await fetch(`${API_BASE_URL}/verify`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
